@@ -1,3 +1,4 @@
+DROP FUNCTION IF EXISTS timetable.is_cron_in_time;
 CREATE OR REPLACE FUNCTION timetable.is_cron_in_time(
     run_at timetable.cron, 
     ts timestamp
@@ -16,11 +17,10 @@ CREATE OR REPLACE FUNCTION timetable.is_cron_in_time(
         timetable.cron_split_to_arrays(run_at) a
 $$ LANGUAGE SQL;
 
-DROP FUNCTION timetable.is_cron_in_time(timetable.cron, timestamp with time zone);
-
 ALTER TABLE timetable.chain
     ADD COLUMN run_at_time_zone TEXT DEFAULT current_setting('TIMEZONE') NOT NULL;
 
+DROP FUNCTION IF EXISTS timetable.add_job;
 CREATE OR REPLACE FUNCTION timetable.add_job(
     job_name            TEXT,
     job_schedule        timetable.cron,
@@ -34,7 +34,7 @@ CREATE OR REPLACE FUNCTION timetable.add_job(
     job_ignore_errors   BOOLEAN DEFAULT TRUE,
     job_exclusive       BOOLEAN DEFAULT FALSE,
     job_on_error        TEXT DEFAULT NULL,
-    job_time_zone       TEXT DEFAULT current_setting('TIMEZONE')
+    job_time_zone       TEXT DEFAULT current_setting('timezone')
 ) RETURNS BIGINT AS $$
     WITH 
         cte_chain (v_chain_id) AS (
@@ -54,5 +54,3 @@ CREATE OR REPLACE FUNCTION timetable.add_job(
         )
         SELECT v_chain_id FROM cte_chain
 $$ LANGUAGE SQL;
-
-DROP FUNCTION timetable.add_job(TEXT, timetable.cron, TEXT, JSONB, timetable.command_kind, TEXT, INTEGER, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN, TEXT);
