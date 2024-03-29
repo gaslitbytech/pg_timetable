@@ -18,7 +18,7 @@ CREATE OR REPLACE FUNCTION timetable.is_cron_in_time(
 $$ LANGUAGE SQL;
 
 ALTER TABLE timetable.chain
-    ADD COLUMN run_at_time_zone TEXT DEFAULT current_setting('TIMEZONE') NOT NULL;
+    ADD COLUMN run_at_timezone TEXT DEFAULT current_setting('timezone') NOT NULL;
 
 DROP FUNCTION IF EXISTS timetable.add_job;
 CREATE OR REPLACE FUNCTION timetable.add_job(
@@ -34,12 +34,12 @@ CREATE OR REPLACE FUNCTION timetable.add_job(
     job_ignore_errors   BOOLEAN DEFAULT TRUE,
     job_exclusive       BOOLEAN DEFAULT FALSE,
     job_on_error        TEXT DEFAULT NULL,
-    job_time_zone       TEXT DEFAULT current_setting('timezone')
+    job_timezone       TEXT DEFAULT current_setting('timezone')
 ) RETURNS BIGINT AS $$
     WITH 
         cte_chain (v_chain_id) AS (
-            INSERT INTO timetable.chain (chain_name, run_at, max_instances, live, self_destruct, client_name, exclusive_execution, on_error, run_at_time_zone) 
-            VALUES (job_name, job_schedule,job_max_instances, job_live, job_self_destruct, job_client_name, job_exclusive, job_on_error, job_time_zone)
+            INSERT INTO timetable.chain (chain_name, run_at, max_instances, live, self_destruct, client_name, exclusive_execution, on_error, run_at_timezone) 
+            VALUES (job_name, job_schedule,job_max_instances, job_live, job_self_destruct, job_client_name, job_exclusive, job_on_error, job_timezone)
             RETURNING chain_id
         ),
         cte_task(v_task_id) AS (

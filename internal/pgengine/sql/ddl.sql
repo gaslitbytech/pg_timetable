@@ -9,7 +9,7 @@ CREATE TABLE timetable.chain (
     exclusive_execution BOOLEAN     DEFAULT FALSE,
     client_name         TEXT,
     on_error            TEXT,
-    run_at_time_zone    TEXT        NOT NULL DEFAULT current_setting('TIMEZONE')
+    run_at_timezone    TEXT        NOT NULL DEFAULT current_setting('timezone')
 );
 
 COMMENT ON TABLE timetable.chain IS
