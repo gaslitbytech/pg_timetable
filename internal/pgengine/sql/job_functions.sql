@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION timetable.add_job(
     job_ignore_errors   BOOLEAN DEFAULT TRUE,
     job_exclusive       BOOLEAN DEFAULT FALSE,
     job_on_error        TEXT DEFAULT NULL,
-    job_timezone       TEXT DEFAULT current_setting('timezone')
+    job_timezone        TEXT DEFAULT current_setting('timezone')
 ) RETURNS BIGINT AS $$
     WITH 
         cte_chain (v_chain_id) AS (
