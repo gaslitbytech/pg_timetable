@@ -17,15 +17,15 @@ CREATE OR REPLACE FUNCTION timetable.is_cron_in_time(
         timetable.cron_split_to_arrays(run_at) a
 $$ LANGUAGE SQL;
 
-DROP FUNCTION IF EXISTS timetable.is_pg_timetable_name;
-CREATE FUNCTION timetable.is_pg_timetable_name(TEXT) RETURNS BOOLEAN AS
+DROP FUNCTION IF EXISTS timetable.is_valid_timezone;
+CREATE FUNCTION timetable.is_valid_timezone(TEXT) RETURNS BOOLEAN AS
 $$
     SELECT $1 IN (SELECT name FROM pg_timezone_names());
 $$ LANGUAGE sql;
 
 ALTER TABLE timetable.chain
     ADD COLUMN run_at_timezone TEXT DEFAULT current_setting('timezone') NOT NULL,
-    ADD CONSTRAINT valid_run_at_timezone CHECK (timetable.is_pg_timetable_name(run_at_timezone));
+    ADD CONSTRAINT valid_run_at_timezone CHECK (timetable.is_valid_timezone(run_at_timezone));
 
 DROP FUNCTION IF EXISTS timetable.add_job;
 CREATE OR REPLACE FUNCTION timetable.add_job(
