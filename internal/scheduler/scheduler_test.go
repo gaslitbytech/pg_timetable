@@ -50,6 +50,8 @@ func TestRun(t *testing.T) {
 	assert.NoError(t, err, "Creating remote tasks failed")
 	err = pge.ExecuteCustomScripts(context.Background(), "../../samples/Basic.sql")
 	assert.NoError(t, err, "Creating sql tasks failed")
+	err = pge.ExecuteCustomScripts(context.Background(), "../../samples/Timezone.sql")
+	assert.NoError(t, err, "Creating sql tasks failed")
 	err = pge.ExecuteCustomScripts(context.Background(), "../../samples/NoOp.sql")
 	assert.NoError(t, err, "Creating built-in tasks failed")
 	err = pge.ExecuteCustomScripts(context.Background(), "../../samples/Shell.sql")

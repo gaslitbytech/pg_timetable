@@ -1,3 +1,8 @@
+CREATE FUNCTION timetable.is_valid_timezone(TEXT) RETURNS BOOLEAN AS
+$$
+    SELECT $1 IN (SELECT name FROM pg_timezone_names());
+$$ LANGUAGE sql;
+
 CREATE TABLE timetable.chain (
     chain_id            BIGSERIAL   PRIMARY KEY,
     chain_name          TEXT        NOT NULL UNIQUE,
@@ -8,7 +13,9 @@ CREATE TABLE timetable.chain (
     self_destruct       BOOLEAN     DEFAULT FALSE,
     exclusive_execution BOOLEAN     DEFAULT FALSE,
     client_name         TEXT,
-    on_error            TEXT
+    on_error            TEXT,
+    run_at_timezone     TEXT        DEFAULT current_setting('timezone')
+        constraint valid_run_at_timezone check (timetable.is_valid_timezone(run_at_timezone))
 );
 
 COMMENT ON TABLE timetable.chain IS
